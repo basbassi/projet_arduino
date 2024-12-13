@@ -1,0 +1,90 @@
+/* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+header {
+    text-align: center;
+    padding: 20px;
+    background-color: #4CAF50;
+    color: white;
+}
+
+header h1 {
+    margin: 0;
+}
+
+#searchBar {
+    margin-top: 15px;
+    padding: 10px;
+    width: 80%;
+    max-width: 500px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#productList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+.product {
+    border: 1px solid #ddd;
+    margin: 10px;
+    padding: 15px;
+    width: 250px;
+    background-color: white;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.product h2 {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.product p {
+    font-size: 14px;
+    color: #555;
+    margin: 10px 0;
+}
+
+.product .price {
+    font-weight: bold;
+    color: #4CAF50;
+    font-size: 16px;
+}
+
+#productList p.no-results {
+    text-align: center;
+    font-size: 18px;
+    color: #999;
+}
+
+/* Responsivité */
+@media (max-width: 600px) {
+    #searchBar {
+        width: 100%;
+    }
+    .product {
+        width: 100%;
+    }
+}
