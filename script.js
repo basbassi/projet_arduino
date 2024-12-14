@@ -1,86 +1,130 @@
-// script.js
-
-// Liste des produits
+// Exemple de liste de produits avec images
 const products = [
-    { id: 1, name: "Mega", price: "100€", description: "Description courte du produit A", image: "mega.jpeg", favorite: false },
-    { id: 2, name: "Nano", price: "150€", description: "Description courte du produit B", image: "nano.jpg", favorite: false },
-    { id: 3, name: "Uno", price: "200€", description: "Description courte du produit C", image: "uno.jpg", favorite: false },
-    { id: 4, name: "Uno1", price: "250€", description: "Description courte du produit D", image: "uno.jpg", favorite: false },
-    { id: 5, name: "Uno2", price: "300€", description: "Description courte du produit E", image: "uno.jpg", favorite: false }
+    { id: 1, name: "Produit A", price: "10€", description: "Description du produit A", image: "assets/img/nano.jpg" },
+    { id: 2, name: "Produit B", price: "20€", description: "Description du produit B", image: "assets/img/mega.jpeg" },
+    { id: 3, name: "Produit C", price: "15€", description: "Description du produit C", image: "assets/img/mega.jpeg" },
 ];
 
-// Afficher tous les produits
-function displayProducts(productArray) {
+let favoriteProducts = [];
+let totalPrice = 0;
+
+// Afficher les produits avec leurs images
+function displayProducts(productsToDisplay) {
     const productList = document.getElementById("productList");
-    productList.innerHTML = ""; // Réinitialiser la liste des produits
-    productArray.forEach(product => {
+    productList.innerHTML = "";
+    productsToDisplay.forEach(product => {
         productList.innerHTML += `
             <div class="product">
-                <img src="assets/img/${product.image}" alt="${product.name}">
-                <h2>${product.name}</h2>
+                <img src="${product.image}" alt="${product.name}">
+                <h3>${product.name}</h3>
                 <p>${product.description}</p>
-                <p class="price">${product.price}</p>
-                <span class="favorite-icon" onclick="toggleFavorite(${product.id})">
-                    ${product.favorite ? "❤️" : "🤍"}
-                </span>
+                <p>${product.price}</p>
+                <button onclick="toggleFavorite(${product.id})">Favori</button>
             </div>
         `;
     });
-    updateTotalPrice(); // Mettre à jour le prix total
 }
 
-// Filtrer les produits via la barre de recherche
+// Ajouter aux favoris
+function toggleFavorite(productId) {
+    const product = products.find(p => p.id === productId);
+    if (favoriteProducts.includes(product)) {
+        favoriteProducts = favoriteProducts.filter(p => p.id !== productId);
+    } else {
+        favoriteProducts.push(product);
+    }
+    calculateTotalPrice();
+}
+
+// Calcul du prix total
+function calculateTotalPrice() {
+    totalPrice = favoriteProducts.reduce((sum, product) => {
+        return sum + parseFloat(product.price.replace('€', ''));
+    }, 0);
+    document.getElementById("totalPrice").textContent = `Prix total des favoris : ${totalPrice}€`;
+}
+
+// Afficher les favoris filtrés
+function viewFavorites() {
+    const productList = document.getElementById("productList");
+    productList.innerHTML = "";
+
+    if (favoriteProducts.length === 0) {
+        productList.innerHTML = "<p>Aucun produit favori sélectionné.</p>";
+    } else {
+        favoriteProducts.forEach(product => {
+            productList.innerHTML += `
+                <div class="product">
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p>${product.price}</p>
+                    <button onclick="toggleFavorite(${product.id})">Retirer du favori</button>
+                </div>
+            `;
+        });
+    }
+    document.getElementById("totalPrice").textContent = `Prix total des favoris : ${totalPrice}€`;
+}
+
+// Fonction de filtrage des produits
 function filterProducts() {
-    const searchBar = document.getElementById("searchBar").value.toLowerCase();
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchBar) ||
-        product.description.toLowerCase().includes(searchBar)
-    );
+    const searchTerm = document.getElementById("searchBar").value.toLowerCase();
+
+    const filteredProducts = products.filter(product => {
+        return product.name.toLowerCase().includes(searchTerm) || 
+               product.description.toLowerCase().includes(searchTerm);
+    });
+
     displayProducts(filteredProducts);
 }
 
-// Basculer l'état de favori
-function toggleFavorite(productId) {
-    const product = products.find(p => p.id === productId);
-    product.favorite = !product.favorite;
-    saveFavorites();
-    displayProducts(products);
+// Ouvrir la page de commande
+function openOrderPage() {
+    localStorage.setItem('favoriteProducts', JSON.stringify(favoriteProducts));
+    localStorage.setItem('totalPrice', totalPrice);
+    window.location.href = 'order.html';
 }
 
-// Afficher uniquement les favoris
-function displayFavorites() {
-    const favoriteProducts = products.filter(product => product.favorite);
-    displayProducts(favoriteProducts);
-}
-
-// Mettre à jour le prix total des favoris
-function updateTotalPrice() {
-    const totalPriceElement = document.getElementById("totalPrice");
-    const favoriteProducts = products.filter(product => product.favorite);
-    const total = favoriteProducts.reduce((sum, product) => {
-        const price = parseFloat(product.price.replace("€", ""));
-        return sum + price;
-    }, 0);
-    totalPriceElement.textContent = `Total des favoris : ${total}€`;
-}
-
-// Enregistrer les favoris dans le stockage local
-function saveFavorites() {
-    localStorage.setItem("favorites", JSON.stringify(products));
-}
-
-// Charger les favoris depuis le stockage local
-function loadFavorites() {
-    const savedFavorites = JSON.parse(localStorage.getItem("favorites"));
-    if (savedFavorites) {
-        products.forEach((product, index) => {
-            product.favorite = savedFavorites[index]?.favorite || false;
+// Charger les favoris sur la page de commande
+function loadOrderPage() {
+    const orderList = document.getElementById("orderList");
+    const savedProducts = JSON.parse(localStorage.getItem('favoriteProducts'));
+    const savedTotalPrice = localStorage.getItem('totalPrice');
+    if (savedProducts && orderList) {
+        orderList.innerHTML = '';
+        savedProducts.forEach(product => {
+            orderList.innerHTML += `<li><img src="${product.image}" alt="${product.name}" style="width: 50px; height: 50px;"> ${product.name} - ${product.price}</li>`;
         });
+        document.getElementById("orderTotalPrice").textContent = `Prix total : ${savedTotalPrice}€`;
     }
 }
 
-// Initialiser l'affichage des produits
+// Envoyer la commande via WhatsApp
+function sendWhatsAppOrder() {
+    const savedProducts = JSON.parse(localStorage.getItem('favoriteProducts'));
+    const savedTotalPrice = localStorage.getItem('totalPrice');
+    let message = "Bonjour, je souhaite commander les produits suivants :\n\n";
+    savedProducts.forEach(product => {
+        message += `- ${product.name} : ${product.price}\n`;
+    });
+    message += `\nPrix total : ${savedTotalPrice}€`;
+    const phoneNumber = "+212717707677"; // Numéro de l'administrateur
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+}
+
+// Retour au catalogue
+function goBack() {
+    window.location.href = 'index.html';
+}
+
+// Initialisation
 document.addEventListener("DOMContentLoaded", () => {
-    loadFavorites();
-    displayProducts(products);
+    if (window.location.pathname.includes("index.html")) {
+        displayProducts(products);
+    }
+    if (window.location.pathname.includes("order.html")) {
+        loadOrderPage();
+    }
 });

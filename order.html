@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commander via WhatsApp</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Commander via WhatsApp</h1>
+    </header>
+    <main class="order-container">
+        <p>Votre sélection de produits :</p>
+        <ul id="orderList"></ul>
+        <p id="orderTotalPrice">Prix total : 0€</p>
+        <button id="sendWhatsApp" onclick="sendWhatsAppOrder()">Envoyer la commande</button>
+        <button id="backToCatalog" onclick="goBack()">Retour au catalogue</button>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

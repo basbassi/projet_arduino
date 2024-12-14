@@ -1,155 +1,154 @@
-/* Styles globaux */
+/* Styles de base */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
+    background-color: #f4f4f4;
     color: #333;
 }
 
-/* En-tête */
 header {
-    background-color: #007BFF;
+    background-color: #4CAF50;
     color: white;
     padding: 20px;
     text-align: center;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
     margin: 0;
-    font-size: 24px;
 }
 
 header input {
-    margin-top: 10px;
+    width: 60%;
     padding: 10px;
+    margin: 10px 0;
     font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    width: 80%;
-    max-width: 500px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 header button {
-    margin-top: 10px;
+    margin: 10px 5px;
     padding: 10px 20px;
     font-size: 16px;
-    color: #007BFF;
-    background-color: white;
-    border: 2px solid white;
+    color: white;
+    background-color: #4CAF50;
+    border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 header button:hover {
-    background-color: #0056b3;
-    color: white;
+    background-color: #388E3C;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-#totalPrice {
-    margin-top: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #ffffff;
-}
-
-/* Conteneur des produits */
 main {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
     padding: 20px;
 }
 
-/* Carte produit */
+#productList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
 .product {
     background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin: 10px;
-    width: 250px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
     text-align: center;
-    overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .product:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .product img {
     width: 100%;
-    height: 150px;
+    height: auto;
+    border-radius: 5px;
+}
+
+.product button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    font-size: 14px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.product button:hover {
+    background-color: #d32f2f;
+}
+
+.order-container {
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    max-width: 600px;
+    margin: 20px auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-container button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.order-container button:hover {
+    background-color: #388E3C;
+}
+.product {
+    border: 1px solid #ccc;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.product img {
+    width: 100px;
+    height: 100px;
     object-fit: cover;
 }
 
-.product h2 {
-    font-size: 20px;
-    color: #333;
-    margin: 10px 0;
-}
-
-.product p {
-    font-size: 14px;
-    color: #666;
-    padding: 0 10px;
-}
-
-.product .price {
-    font-size: 16px;
-    color: #007BFF;
-    font-weight: bold;
-    margin: 10px 0;
-}
-
-/* Icône de favori */
-.favorite-icon {
-    font-size: 20px;
+button {
+    padding: 5px 10px;
+    margin-top: 10px;
     cursor: pointer;
-    margin: 10px 0;
-    color: #FF5722;
-    transition: transform 0.3s, color 0.3s;
 }
 
-.favorite-icon:hover {
-    transform: scale(1.2);
-    color: #e53935;
+header {
+    text-align: center;
+    margin: 20px;
 }
 
-/* Responsivité */
-@media (max-width: 768px) {
-    header input {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    .product {
-        width: 90%;
-    }
+main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
 }
 
-@media (max-width: 480px) {
-    header h1 {
-        font-size: 20px;
-    }
-
-    header button {
-        font-size: 14px;
-    }
-
-    .product h2 {
-        font-size: 18px;
-    }
-
-    .product .price {
-        font-size: 14px;
-    }
+#productList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
+
+#viewFavorites {
+    margin: 10px;
+}
+
