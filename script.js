@@ -1,130 +1,89 @@
-// Exemple de liste de produits avec images
-const products = [
-    { id: 1, name: "Produit A", price: "10€", description: "Description du produit A", image: "assets/img/nano.jpg" },
-    { id: 2, name: "Produit B", price: "20€", description: "Description du produit B", image: "assets/img/mega.jpeg" },
-    { id: 3, name: "Produit C", price: "15€", description: "Description du produit C", image: "assets/img/mega.jpeg" },
-];
-
-let favoriteProducts = [];
-let totalPrice = 0;
-
-// Afficher les produits avec leurs images
-function displayProducts(productsToDisplay) {
-    const productList = document.getElementById("productList");
-    productList.innerHTML = "";
-    productsToDisplay.forEach(product => {
-        productList.innerHTML += `
-            <div class="product">
-                <img src="${product.image}" alt="${product.name}">
-                <h3>${product.name}</h3>
-                <p>${product.description}</p>
-                <p>${product.price}</p>
-                <button onclick="toggleFavorite(${product.id})">Favori</button>
-            </div>
-        `;
+const produits = [
+    { id: 1, name: "Produit A", price: "10€", description: "Description du produit A", image: "assets/img/nano.jpg", isFavorite: false },
+    { id: 2, name: "Produit B", price: "20€", description: "Description du produit B", image: "assets/img/mega.jpeg", isFavorite: false },
+    { id: 3, name: "Produit C", price: "15€", description: "Description du produit C", image: "assets/img/mega.jpeg", isFavorite: false },
+  ];
+  
+  let showFavoritesOnly = false;
+  
+  // Fonction pour afficher les produits
+  const displayProducts = (products) => {
+    const productList = document.getElementById("product-list");
+    productList.innerHTML = products
+      .map(
+        (p) => `
+        <div class="product">
+          <img src="${p.image}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <p>${p.price}</p>
+          <p>${p.description}</p>
+          <span class="favorite" data-id="${p.id}">
+            ${p.isFavorite ? "❤️" : "🤍"}
+          </span>
+        </div>
+      `
+      )
+      .join("");
+  };
+  
+  // Fonction pour gérer les favoris
+  const toggleFavorite = (id) => {
+    const product = produits.find((p) => p.id === id);
+    if (product) {
+      product.isFavorite = !product.isFavorite;
+    }
+  };
+  
+  // Gestion des événements
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("search");
+    const showFavoritesButton = document.getElementById("show-favorites");
+    const sendOrderButton = document.getElementById("send-order");
+  
+    // Afficher tous les produits au chargement
+    displayProducts(produits);
+  
+    // Filtrer les produits par recherche
+    searchInput.addEventListener("input", (e) => {
+      const query = e.target.value.toLowerCase();
+      const filtered = produits.filter((p) =>
+        p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query)
+      );
+      displayProducts(filtered);
     });
-}
-
-// Ajouter aux favoris
-function toggleFavorite(productId) {
-    const product = products.find(p => p.id === productId);
-    if (favoriteProducts.includes(product)) {
-        favoriteProducts = favoriteProducts.filter(p => p.id !== productId);
-    } else {
-        favoriteProducts.push(product);
-    }
-    calculateTotalPrice();
-}
-
-// Calcul du prix total
-function calculateTotalPrice() {
-    totalPrice = favoriteProducts.reduce((sum, product) => {
-        return sum + parseFloat(product.price.replace('€', ''));
-    }, 0);
-    document.getElementById("totalPrice").textContent = `Prix total des favoris : ${totalPrice}€`;
-}
-
-// Afficher les favoris filtrés
-function viewFavorites() {
-    const productList = document.getElementById("productList");
-    productList.innerHTML = "";
-
-    if (favoriteProducts.length === 0) {
-        productList.innerHTML = "<p>Aucun produit favori sélectionné.</p>";
-    } else {
-        favoriteProducts.forEach(product => {
-            productList.innerHTML += `
-                <div class="product">
-                    <img src="${product.image}" alt="${product.name}">
-                    <h3>${product.name}</h3>
-                    <p>${product.description}</p>
-                    <p>${product.price}</p>
-                    <button onclick="toggleFavorite(${product.id})">Retirer du favori</button>
-                </div>
-            `;
-        });
-    }
-    document.getElementById("totalPrice").textContent = `Prix total des favoris : ${totalPrice}€`;
-}
-
-// Fonction de filtrage des produits
-function filterProducts() {
-    const searchTerm = document.getElementById("searchBar").value.toLowerCase();
-
-    const filteredProducts = products.filter(product => {
-        return product.name.toLowerCase().includes(searchTerm) || 
-               product.description.toLowerCase().includes(searchTerm);
+  
+    // Afficher uniquement les favoris
+    showFavoritesButton.addEventListener("click", () => {
+      showFavoritesOnly = !showFavoritesOnly;
+      const filtered = showFavoritesOnly
+        ? produits.filter((p) => p.isFavorite)
+        : produits;
+      displayProducts(filtered);
     });
-
-    displayProducts(filteredProducts);
-}
-
-// Ouvrir la page de commande
-function openOrderPage() {
-    localStorage.setItem('favoriteProducts', JSON.stringify(favoriteProducts));
-    localStorage.setItem('totalPrice', totalPrice);
-    window.location.href = 'order.html';
-}
-
-// Charger les favoris sur la page de commande
-function loadOrderPage() {
-    const orderList = document.getElementById("orderList");
-    const savedProducts = JSON.parse(localStorage.getItem('favoriteProducts'));
-    const savedTotalPrice = localStorage.getItem('totalPrice');
-    if (savedProducts && orderList) {
-        orderList.innerHTML = '';
-        savedProducts.forEach(product => {
-            orderList.innerHTML += `<li><img src="${product.image}" alt="${product.name}" style="width: 50px; height: 50px;"> ${product.name} - ${product.price}</li>`;
-        });
-        document.getElementById("orderTotalPrice").textContent = `Prix total : ${savedTotalPrice}€`;
-    }
-}
-
-// Envoyer la commande via WhatsApp
-function sendWhatsAppOrder() {
-    const savedProducts = JSON.parse(localStorage.getItem('favoriteProducts'));
-    const savedTotalPrice = localStorage.getItem('totalPrice');
-    let message = "Bonjour, je souhaite commander les produits suivants :\n\n";
-    savedProducts.forEach(product => {
-        message += `- ${product.name} : ${product.price}\n`;
+  
+    // Envoyer la commande via WhatsApp
+    sendOrderButton.addEventListener("click", () => {
+      const favoriteProducts = produits.filter((p) => p.isFavorite);
+      if (favoriteProducts.length === 0) {
+        alert("Aucun produit favori sélectionné !");
+        return;
+      }
+      const message = favoriteProducts
+        .map((p) => `${p.name} - ${p.price}`)
+        .join("\n");
+      const whatsappURL = `https://wa.me/+212717707677?text=${encodeURIComponent(
+        "Voici ma commande :\n" + message
+      )}`;
+      window.open(whatsappURL, "_blank");
     });
-    message += `\nPrix total : ${savedTotalPrice}€`;
-    const phoneNumber = "+212717707677"; // Numéro de l'administrateur
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-}
-
-// Retour au catalogue
-function goBack() {
-    window.location.href = 'index.html';
-}
-
-// Initialisation
-document.addEventListener("DOMContentLoaded", () => {
-    if (window.location.pathname.includes("index.html")) {
-        displayProducts(products);
-    }
-    if (window.location.pathname.includes("order.html")) {
-        loadOrderPage();
-    }
-});
+  
+    // Gestion des favoris
+    document.getElementById("product-list").addEventListener("click", (e) => {
+      if (e.target.classList.contains("favorite")) {
+        const id = parseInt(e.target.dataset.id);
+        toggleFavorite(id);
+        displayProducts(produits);
+      }
+    });
+  });
+  

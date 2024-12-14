@@ -3,152 +3,146 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
-}
-
-header {
-    background-color: #4CAF50;
-    color: white;
+    background-color: #f8f9fa;
+  }
+  
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
     padding: 20px;
-    text-align: center;
-}
-
-header h1 {
-    margin: 0;
-}
-
-header input {
-    width: 60%;
-    padding: 10px;
-    margin: 10px 0;
-    font-size: 16px;
-}
-
-header button {
-    margin: 10px 5px;
-    padding: 10px 20px;
-    font-size: 16px;
+    background-color: #007bff;
     color: white;
-    background-color: #4CAF50;
+  }
+  
+  header input {
+    padding: 10px;
+    width: 300px;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-header button:hover {
-    background-color: #388E3C;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-main {
-    padding: 20px;
-}
-
-#productList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.product {
-    background-color: white;
-    border: 1px solid #ddd;
+  }
+  
+  header button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
     border-radius: 5px;
+    background-color: white;
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+  header button:hover {
+    background-color: #0056b3;
+    color: white;
+  }
+  
+  /* Grille des produits */
+  #product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .product {
+    border: 1px solid #ddd;
+    border-radius: 10px;
     padding: 15px;
     text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.product:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.product img {
-    width: 100%;
-    height: auto;
-    border-radius: 5px;
-}
-
-.product button {
-    margin-top: 10px;
-    padding: 10px 15px;
-    font-size: 14px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.product button:hover {
-    background-color: #d32f2f;
-}
-
-.order-container {
-    padding: 20px;
     background-color: white;
-    border-radius: 5px;
-    max-width: 600px;
-    margin: 20px auto;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.order-container button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.order-container button:hover {
-    background-color: #388E3C;
-}
-.product {
-    border: 1px solid #ccc;
-    margin: 10px;
-    padding: 10px;
-    text-align: center;
-}
-
-.product img {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .product img {
     width: 100px;
     height: 100px;
     object-fit: cover;
-}
-
-button {
-    padding: 5px 10px;
-    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .product h3 {
+    font-size: 18px;
+    color: #007bff;
+  }
+  
+  .product p {
+    margin: 5px 0;
+  }
+  
+  .favorite {
+    color: red;
+    font-size: 20px;
     cursor: pointer;
-}
-
-header {
-    text-align: center;
-    margin: 20px;
-}
-
-main {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-}
-
-#productList {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-#viewFavorites {
-    margin: 10px;
-}
-
+  }
+  
+  .favorite:hover {
+    transform: scale(1.2);
+  }
+  
+  /* Responsiveness */
+  
+  /* Petits appareils (téléphones) */
+  @media (max-width: 600px) {
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px;
+    }
+  
+    header input {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    header button {
+      width: 100%;
+      margin: 5px 0;
+    }
+  
+    #product-list {
+      grid-template-columns: 1fr;
+      padding: 10px;
+    }
+  
+    .product img {
+      width: 80px;
+      height: 80px;
+    }
+  
+    .product h3 {
+      font-size: 16px;
+    }
+  
+    .product p {
+      font-size: 14px;
+    }
+  }
+  
+  /* Moyens appareils (tablettes) */
+  @media (max-width: 1024px) {
+    header {
+      padding: 15px;
+    }
+  
+    header input {
+      width: 60%;
+    }
+  
+    header button {
+      margin-left: 0;
+      margin-top: 10px;
+    }
+  
+    #product-list {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+    }
+  
+    .product img {
+      width: 90px;
+      height: 90px;
+    }
+  }
+  

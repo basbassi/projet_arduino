@@ -1,22 +1,21 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="produits, prix, description, recherche, favoris, commande">
-    <meta name="description" content="Catalogue de produits avec barre de recherche et commande par WhatsApp">
-    <title>Catalogue de Produits</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liste des Produits</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Catalogue de Produits</h1>
-        <input type="text" id="searchBar" placeholder="Rechercher un produit..." onkeyup="filterProducts()">
-        <button id="viewFavorites" onclick="viewFavorites()">Afficher les Favoris</button>
-        <button id="sendOrder" onclick="openOrderPage()">Commander via WhatsApp</button>
-        <p id="totalPrice">Prix total des favoris : 0€</p>
-    </header>
-    <main id="productList"></main>
-    <script src="script.js"></script>
+  <header>
+    <h1>Catalogue de Produits</h1>
+    <input type="text" id="search" placeholder="Rechercher un produit...">
+    <button id="show-favorites">Afficher Favoris</button>
+    <button id="send-order">Envoyer Commande</button>
+  </header>
+  <main>
+    <div id="product-list"></div>
+  </main>
+  <script src="script.js" defer></script>
 </body>
 </html>
