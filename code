@@ -1,0 +1,147 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+#define ONE_WIRE_BUS 2
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+DeviceAddress capteur1, capteur2;
+
+#define ZMPT101B_PIN A0
+#define TENSION_SEUIL 10.0  // Seuil en volts (à ajuster selon votre besoin)
+#define HISTORIQUE_SIZE 3  // Nombre de valeurs historiques à conserver
+
+unsigned long debut_tension = 0, duree_tension = 0;
+unsigned long debut_absence = 0, duree_absence = 0;
+bool tension_active = false;
+
+// Historiques des temps de présence et d'absence de tension
+unsigned long historique_presence[HISTORIQUE_SIZE];
+unsigned long historique_absence[HISTORIQUE_SIZE];
+int historique_index = 0;
+
+void setup() {
+    lcd.begin(16, 2);
+    lcd.backlight();
+    lcd.print("Initialisation...");
+    delay(2000);
+    lcd.clear();
+
+    sensors.begin();
+    if (sensors.getDeviceCount() < 2) {
+        lcd.print("Capteurs non");
+        lcd.setCursor(0, 1);
+        lcd.print("detectes !");
+        while (1);
+    }
+
+    sensors.getAddress(capteur1, 0);
+    sensors.getAddress(capteur2, 1);
+    sensors.setResolution(capteur1, 12);
+    sensors.setResolution(capteur2, 12);
+
+    // Initialisation des historiques
+    for (int i = 0; i < HISTORIQUE_SIZE; i++) {
+        historique_presence[i] = 0;
+        historique_absence[i] = 0;
+    }
+}
+
+float mesurerTension() {
+    const int N = 500;  // Nombre d'échantillons
+    float somme_carre = 0.0;
+
+    for (int i = 0; i < N; i++) {
+        float tension = analogRead(ZMPT101B_PIN) * (5.0 / 1023.0) - 2.5; // Offset à 2.5V
+        somme_carre += tension * tension;
+        delayMicroseconds(1000);  // Pause pour éviter une lecture trop rapide
+    }
+
+    float valeurRMS = sqrt(somme_carre / N); // Tension RMS
+    return valeurRMS * 50.0; // Facteur d'étalonnage à ajuster
+}
+
+void ajouterHistorique(unsigned long presence, unsigned long absence) {
+    historique_presence[historique_index] = presence;
+    historique_absence[historique_index] = absence;
+    historique_index = (historique_index + 1) % HISTORIQUE_SIZE;
+}
+
+String formaterDuree(unsigned long duree) {
+    unsigned long minutes = duree / 60;
+    unsigned long secondes = duree % 60;
+    return String(minutes) + "m" + String(secondes) + "s";
+}
+
+void afficherHistorique() {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Hist OFF:");
+
+    for (int i = 0; i < HISTORIQUE_SIZE; i++) {
+        lcd.setCursor(i * 5, 1);  // Affiche chaque valeur sur la deuxième ligne
+        lcd.print(formaterDuree(historique_absence[i]));
+    }
+    delay(5000);  // Afficher pendant 3 secondes
+
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Hist ON:");
+
+    for (int i = 0; i < HISTORIQUE_SIZE; i++) {
+        lcd.setCursor(i * 5, 1);  // Affiche chaque valeur sur la deuxième ligne
+        lcd.print(formaterDuree(historique_presence[i]));
+    }
+    delay(5000);  // Afficher pendant 3 secondes
+}
+
+void loop() {
+    float tension_mesuree = mesurerTension();
+
+    if (tension_mesuree > TENSION_SEUIL) {
+        if (!tension_active) {
+            debut_tension = millis();
+            duree_absence = (millis() - debut_absence) / 1000;
+            tension_active = true;
+            ajouterHistorique(0, duree_absence);  // Ajouter l'absence à l'historique
+        }
+        duree_tension = (millis() - debut_tension) / 1000;
+    } else {
+        if (tension_active) {
+            debut_absence = millis();
+            duree_tension = (millis() - debut_tension) / 1000;
+            tension_active = false;
+            ajouterHistorique(duree_tension, 0);  // Ajouter la présence à l'historique
+        }
+        duree_absence = (millis() - debut_absence) / 1000;
+    }
+
+    sensors.requestTemperatures();
+    int temp1 = (int)sensors.getTempC(capteur1);
+    int temp2 = (int)sensors.getTempC(capteur2);
+
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("T1:");
+    lcd.print(temp1);
+    lcd.print("C T2:");
+    lcd.print(temp2);
+    lcd.print("C");
+
+    lcd.setCursor(0, 1);
+    lcd.print("F:");
+    lcd.print(formaterDuree(duree_absence));
+    lcd.print(" N:");
+    lcd.print(formaterDuree(duree_tension));
+
+    delay(10000);
+
+    // Afficher l'historique toutes les 10 secondes
+    static unsigned long dernier_affichage = 0;
+    if (millis() - dernier_affichage >= 10000) {
+        dernier_affichage = millis();
+        afficherHistorique();
+    }
+}
